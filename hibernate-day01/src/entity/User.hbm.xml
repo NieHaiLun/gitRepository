@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<!-- 完成类和表的对应 -->
+	<class name="entity.User" table="t_user">
+	<!-- 配置实体类属性和表主键对应使用id标签
+		name:类中属性名称
+		column:表中字段名称 -->
+	<id name="id" column="id">
+		<!-- 生成策略 -->
+		<generator class="native"></generator>
+	</id>
+		<property name="username" column="username"></property>
+		<property name="password" column="password"></property>
+		<property name="address" column="address"></property>
+	</class>
+</hibernate-mapping>

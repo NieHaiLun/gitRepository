@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+		<!--A 数据库部分配置必须 -->
+		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/day35</property>
+		<property name="hibernate.connection.password">root</property>
+		<property name="hibernate.connection.username">root</property>
+		<!--B hibernate信息,可选的 -->
+		<property name="hibernate.show_sql">true</property>
+		<!-- 格式化 -->
+		<property name="hibernate.format_sql">true</property>
+		<!-- 创建数据库表,配置实现
+			create-drop:每次创建完后都删除
+			create:删除原来的表,创建新的表
+			update:如果已经有相同的表,把表更新,如果没有表,创建表
+			validate:如果数据库存在相同的表,把表更新,如果有没有表,创建表,数据库表字段必须和实体类属性完全一样
+		 -->
+		<property name="hibernate.hbm2ddl.auto">update</property>
+		<!-- 配置数据库方言 
+			mysql中的关键字其他数据库不一定有
+			每个数据库有特有的关键字
+		-->
+		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+		<!-- C 引入映射文件 必须 -->
+		<mapping resource="entity/User.hbm.xml"/>
+	</session-factory>
+</hibernate-configuration>

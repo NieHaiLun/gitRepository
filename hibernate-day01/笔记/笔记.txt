@@ -1,0 +1,139 @@
+JavaEE 三层结构
+	web:视图层:数据处理
+		struts2框架
+	service:业务逻辑层:业务逻辑操作
+		spring框架
+	dao:数据库操作部分
+		hibernate框架
+hibernate概述:
+	框架:
+		a.框架可以理解为程序的半成品,使用框架提高开发效率
+		b.框架帮我们实现了一部分功能,使用框架简化代码
+		c.用配置文件实现框架中的功能
+	A.什么是hibernate框架
+		hibernate是一个开放源代码的对象关系映射框架,对JDBC进行了轻量化的封装,使用hibernate框架方便实现对数据库crud操作.
+		1.使用jdbc时候,写sql语句,使用hibernate框架不需要sql语句
+		2.使用jdbc需要自己创建数据库表,hibernate可以帮助创建表
+		3.hibernate是一个持久层的ORM框架
+		版本	 hibernate 5.x 常用的版本 3.x和5.x
+	B. orm思想
+		Object Relational Mapping 对象关系映射
+		1.在web阶段,一个javabean和数据库表进行对应,称之为实体类(持久化类).
+		2.让实体类和数据库表进行一一对应关系.
+			实体类和数据库表进行对应,
+			实体类里的属性和数据库里面字段进行对应.
+			对应关系用配置文件实现
+		3.不需要操作数据库表,直接操作表对应的实体类的对象.
+	C.hibernate的优势:
+		1.大大简化了数据访问层繁琐重复的代码,减少了内存消耗,加快了运行效率.
+		2.基于JDBC的主流持久化框架,是一个优秀的ORM实现,假话了DAO层编码
+		3.映射的灵活性出色,支持很多关系型数据库,从一对一到多对多的各种复杂关系.
+		4.可扩展性强,由于源代码的开源和API的开放,当本身功能不够用是,可以自行编码进行扩展.
+	D.搭建hibernate案例
+		1.导jar包
+			required   日志jar  mysql jar
+		2.配置实体类和数据表对应关系(映射关系)
+			a.创建映射配置文件,xml
+			b.映射配置文件特点:名称和位置是不固定的
+				建议把映射配置文件放到实体类所在的包里面
+				实体类名称.hbm.xml
+			c.只要配置文件是xml格式的,首先在配置文件中引入约束
+				xml文件的约束有很多种,常用dtd和schema约束.
+			
+		配置:
+		<hibernate-mapping>
+			<!-- 完成类和表的对应 -->
+			<class name="entity.User" table="t_user">
+			<!-- 配置实体类属性和表主键对应使用id标签
+				name:类中属性名称
+				column:表中字段名称 -->
+			<id name="" column="">
+				<!-- 生成策略 -->
+				<gererator class="native"></gererator>
+			</id>
+				<property name="username" column="username"></property>
+				<property name="password" column="password"></property>
+				<property name="address" column="address"></property>
+			</class>
+		</hibernate-mapping>
+		4.创建hibernate核心配置文件
+			机制:运行hibernate过程中,之后加载核心配置文件,其他配置文件不会加载
+		5.引入dtd约束
+		
+		开发步骤:
+			1.加载hibernate核心配置文件
+			2.创建sessionFactory对象
+			3.使用SessionFactory对象创建Session对象
+			4.开启事务
+			5.调用session方法实现crud操作
+			6.提交事务
+			7.关闭连接
+		
+		
+	E.Hibernate配置文件详情
+		name:类中的属性名
+		column:表中字段名
+		type :类型,写Java的数据类型
+		length
+		
+		数据库部分
+		hibernate基本信息
+		引入配置文件
+	F.Hibernate核心API
+		注意事项:
+		SessionFactory sessionFactory = cfg.buildSessionFactory();
+		这个过程消耗大量系统资源,一般一个项目中只需要一个SessionFactory对象
+		因此建议使用工具类提供session对象 
+		
+		1.configuration配置对象
+			configuration用于Hibernate框架加载映射文件,启动 加载 管理hibernate的配置文件信息.
+			Configuration config = new Configuration().configure();
+			默认去src下读取hibernate配置文件.如果不使用默认的配置文件,使用configure("xml文件路径");
+		
+		2.SessionFactory Session工厂对象
+			负责Hibernate的初始化和建立Session对象.起到缓冲区的作用,Hibernate可以将生成的SQL语句,映射数据
+			以及某些可重复利用的数据放在这个缓冲区中,同时还保存了对数据库配置的所有映射关系,维护了当前的二级缓存.
+			
+			特点:线程安全,同一个实例能够供多个线程共享.
+				重量级,不能随意创建和销毁它的实例.
+				
+		3.Session
+			Session是应用程序与数据库之间交互操作的一个单线程对象,Hibernate运作的中心,主要功能时为持久化对象提供创建,
+			读取和删除的能力,所有持久化对象必须在session的管理下才可以进行持久化的操作.
+			创建SessionFactory实例后,有两种方法可以获得session的实例.
+			1.openSession() 
+			2.getCurrentSession()
+			区别:采用openSession()获取Session实例时,SessionFactory直接创建一个新的Session实例,使用完成后需要调用close()方法进行手动关闭.
+				getCurrentSession()创建的Session实例会被绑定到当前线程中,在提交或回滚操作时会自动关闭.
+			注意:	Session是线程不安全的,多个并发线程同时操作一个Session时,可能导致Session数据存取的混乱.因此设计软件架构时,应避免多个线程共享一个Session
+			实例.同时它也是轻量级的,实例的创建和销毁不需要消耗太多的资源.Session的缓存是Hibernate的一级缓存,主要用于存放当前工作单元加载的对象.
+		工具类完成crud操作
+			save(对象) update() saveOrUpdate():添加对象和修改对象.
+			delete():删除对象.
+			get()和load() 根据主键查询.
+			createQuery()和createSQLQuery():数据库操作对象.
+			createCriteria() 条件查询
+		4.Transaction
+			transaction主要用于管理事务,它是Hibernate的数据库事务接口,且对底层的事务接口进行了封装.Transaction接口的事务对象是通过Session对象开启的.
+			Transaction transaction = session.beginTransaction();
+			事务管理的常用方法:
+			commit()方法:提交相关联的session实例.
+			rollback()方法:撤销事务操作.
+	G.补充内容
+		复习:事务的相关概念:
+			逻辑上一组相关操作,要么全部成功,有一个失败,全部失败.
+			事务操作的方法:可以修改数据库表中内容操作(修改,删除,添加).
+			事务的四个特性:
+				原子性:事务不可分割,要么都成功,要么都失败
+				隔离性:多个用户并发访问数据库是,一个用户的事务不能被其他用户的事务干扰,多个并发事务之间数据要相互隔离.
+				一致性:事务前后数据的完整性必须保持一致.
+				持久性:一个事务一旦被提交,它对数据库中数据的改变就是永久性的,即使数据库发生故障也不对其有影响.
+			注意事项:
+				hibernate5.x可以不控制事务,但建议手动控制
+				hibernate3.x必须要手动控制事务
+		配置文件快捷键不产生提示:
+			1.联网...
+			2.把DTD约束文件引入到eclipse中  查找xml catalog导入dtd约束 
+		CRM:Customer Relationship Managerment
+			
+		优先级: 
